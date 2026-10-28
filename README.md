@@ -142,10 +142,12 @@ TrustClaw includes an opt-in invite-only signup gate for smaller trusted deploym
 
 ```bash
 ALLOW_OPEN_SIGNUP=false
-ADMIN_USER_EMAIL=you@example.com
+ADMIN_USER_ID=<your user id>
 ```
 
 With open signup disabled, new accounts must provide an unused invite code. The admin user can create and revoke codes at `/dashboard/admin/invites`.
+
+Create your own account before turning off open signup, then set `ADMIN_USER_ID` to its id (for example `SELECT id FROM "user" WHERE username = 'you';`). The admin is matched by account id rather than email because emails are not verified.
 
 ---
 

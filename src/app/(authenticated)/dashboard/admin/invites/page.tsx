@@ -10,7 +10,7 @@ import { InviteList } from "./_components/invite-list";
 export default async function Page() {
   const session = await auth.api.getSession({ headers: await headers() });
 
-  if (!env.ADMIN_USER_EMAIL || session?.user.email !== env.ADMIN_USER_EMAIL) {
+  if (!env.ADMIN_USER_ID || session?.user.id !== env.ADMIN_USER_ID) {
     notFound();
   }
 

@@ -60,7 +60,9 @@ const adminMiddleware = t.middleware(async ({ next, ctx }) => {
     throw new TRPCError({ code: "UNAUTHORIZED" });
   }
 
-  if (!env.ADMIN_USER_EMAIL || ctx.session.user.email !== env.ADMIN_USER_EMAIL) {
+  // Match the account id, not the email: emails are not verified, so anyone
+  // could register the admin's address before the admin does.
+  if (!env.ADMIN_USER_ID || ctx.session.user.id !== env.ADMIN_USER_ID) {
     throw new TRPCError({ code: "FORBIDDEN" });
   }
 
@@ -78,5 +80,5 @@ export const publicProcedure = t.procedure;
 /** Protected procedure - session guaranteed. Throws UNAUTHORIZED if no session. */
 export const protectedProcedure = t.procedure.use(authMiddleware);
 
-/** Admin procedure - session belongs to ADMIN_USER_EMAIL. */
+/** Admin procedure - session belongs to ADMIN_USER_ID. */
 export const adminProcedure = t.procedure.use(adminMiddleware);
