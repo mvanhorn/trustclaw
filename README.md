@@ -8,7 +8,7 @@ A 24/7 personal AI assistant with 1000+ tools via **OAuth** and **sandboxed exec
 
 [Demo Video](https://x.com/sarahfim/status/2022518658048888916)
 [Open Source Launch Video](https://x.com/sarahfim/status/2053989393036145121)
-
+[![Star History Chart](https://api.star-history.com/svg?repos=ComposioHQ/trustclaw&type=Date)](https://star-history.com/#bytebase/star-history&Date)
 
 ---
 
@@ -121,11 +121,20 @@ TrustClaw runs fine on the free Hobby plan, but Vercel applies two limits that a
 
 To get **per-minute cron precision** and **up to 800s (~13 min) per function**, upgrade to [Vercel Pro](https://vercel.com/pricing) and re-run the CLI (or manually flip `vercel.json` back to `* * * * *` + bump `maxDuration`).
 
-### No rate-limiting or billing out of the box
+### Usage caps and billing
 
-TrustClaw ships **without** rate limiting, per-user usage caps, or billing logic. If you put a TrustClaw instance on the public internet for strangers to sign up to, **any user can drain your Composio + AI Gateway credits indefinitely**. Before opening signups to anyone but yourself / a trusted handful of people, add at least:
+TrustClaw ships with Redis-backed per-user rate limiting on the chat, cron, and Telegram agent entrypoints. It is enabled by default and controlled with:
 
-- A rate limiter on the chat + cron endpoints (e.g. [Upstash Rate Limit](https://upstash.com/docs/oss/sdks/ts/ratelimit/overview), [Vercel WAF Rate Limiting](https://vercel.com/docs/vercel-firewall/vercel-waf/rate-limiting))
+- `RATE_LIMIT_CHAT_PER_MINUTE` / `RATE_LIMIT_CHAT_PER_DAY`
+- `RATE_LIMIT_CRON_PER_DAY`
+- `RATE_LIMIT_TELEGRAM_PER_MINUTE`
+- `RATE_LIMIT_FAIL_MODE` (`open` in development, `closed` otherwise)
+- `RATE_LIMIT_ENABLED=false` to bypass all agent entrypoint limits
+
+In production, configure `REDIS_URL` or explicitly set `RATE_LIMIT_FAIL_MODE=open` / `RATE_LIMIT_ENABLED=false`.
+
+If you put a TrustClaw instance on the public internet for strangers to sign up to, add at least:
+
 - A monthly per-user message / tool-call cap enforced server-side
 - Billing if you want to recoup costs
 
